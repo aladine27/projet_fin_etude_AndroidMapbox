@@ -1,11 +1,7 @@
 package com.example.pfemaps;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
-
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,23 +11,12 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.text.Html;
-import android.widget.Button;
 import android.widget.Toast;
 
-
-
-import android.view.View;
-
 import androidx.core.app.ActivityCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.example.pfemaps.databinding.ActivityMainBinding;
 
@@ -48,8 +33,6 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
-import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,19 +46,14 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
-    private MarkerView markerView;
-    private MarkerViewManager markerViewManager;
     FusedLocationProviderClient fusedLocationProviderClient;
-    Button bt_location;
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
     @Override
     protected  void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
 
         //initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -92,13 +70,13 @@ public class MainActivity extends AppCompatActivity {
             mapView.onCreate(savedInstanceState);
 
 
-            mapView.getMapAsync(new OnMapReadyCallback() {
+            mapView.getMapAsync(new OnMapReadyCallback() { //load map
 
                 @Override
                 public void onMapReady(@NonNull MapboxMap mapboxMap) {
                     // Check if our result was valid.
 
-                        getSuperHeroes(mapboxMap);
+                    getListLoactionFromBD(mapboxMap);
 
 
                     mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
@@ -114,12 +92,12 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
- 
+
     }
 
-    private void getSuperHeroes(MapboxMap mapboxMap) {
+    private void getListLoactionFromBD(MapboxMap mapboxMap) {
          getLocation(mapboxMap);
-        Call<List<Results>> call = RetrofitClient.getInstance().getMyApi().getsuperHeroes();
+        Call<List<Results>> call = RetrofitClient.getInstance().getMyApi().getListLoactionFromBD();
 
         call.enqueue(new Callback<List<Results>>() {
 
@@ -127,9 +105,6 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<Results>> call, Response<List<Results>> response) {
                 List<Results> myheroList = response.body();
                 String[] oneHeroes = new String[myheroList.size()];
-
-
-
 
                 for (int i = 0; i < myheroList.size(); i++) {
 
@@ -158,8 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void getLocation(MapboxMap mapboxMap) {
-        Toast.makeText(getApplicationContext(),"ddsd:0", Toast.LENGTH_LONG).show();
-
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -205,8 +178,6 @@ public class MainActivity extends AppCompatActivity {
                         double latx = address.get(0).getLatitude();
 
                         double langy = address.get(0).getLongitude();
-
-                        Toast.makeText(getApplicationContext(),"latx: "+latx+"langy: "+langy, Toast.LENGTH_LONG).show();
 
                         /*
                         mapboxMap.addMarker(new MarkerOptions()
