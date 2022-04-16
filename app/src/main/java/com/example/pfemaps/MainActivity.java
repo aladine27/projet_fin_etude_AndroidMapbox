@@ -5,6 +5,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -74,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     protected  void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        bt_location = findViewById(R.id.bt_location);
 
 
         //initialize fusedLocationProviderClient
@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                         getSuperHeroes(mapboxMap);
 
 
-
                     mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
 
                         @Override
@@ -115,29 +114,20 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-        setSupportActionBar(binding.toolbar);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-       /* bt_location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });*/
+ 
     }
 
     private void getSuperHeroes(MapboxMap mapboxMap) {
+         getLocation(mapboxMap);
         Call<List<Results>> call = RetrofitClient.getInstance().getMyApi().getsuperHeroes();
 
         call.enqueue(new Callback<List<Results>>() {
+
             @Override
             public void onResponse(Call<List<Results>> call, Response<List<Results>> response) {
                 List<Results> myheroList = response.body();
                 String[] oneHeroes = new String[myheroList.size()];
+
 
 
 
@@ -168,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void getLocation(MapboxMap mapboxMap) {
+        Toast.makeText(getApplicationContext(),"ddsd:0", Toast.LENGTH_LONG).show();
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -176,6 +169,9 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            //When permission denied
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+            Toast.makeText(getApplicationContext(),"ddsd:1", Toast.LENGTH_LONG).show();
             return;
         }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -186,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            Toast.makeText(getApplicationContext(),"ddsd:2", Toast.LENGTH_LONG).show();
             return;
         }
         fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
@@ -193,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<Location> task) {
                 //Initialize location
                 Location location = task.getResult();
+
                 if (location != null){
 
                     try {
@@ -208,15 +206,20 @@ public class MainActivity extends AppCompatActivity {
 
                         double langy = address.get(0).getLongitude();
 
-                        Toast.makeText(getApplicationContext(),"ddsd:"+langy, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"latx: "+latx+"langy: "+langy, Toast.LENGTH_LONG).show();
+
+                        /*
+                        mapboxMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(36.862499, 10.195556))
+                                        .title("Chicago")
+                                        .snippet("Illinois")
+                            */
 
                         mapboxMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(latx, langy))
                                 .title("Chicago")
                                 .snippet("Illinois")
                         );
-
-
 
 
 
@@ -253,11 +256,5 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
 
 }
