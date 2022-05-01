@@ -9,9 +9,14 @@ public class Results {
     private String langitude;
 
 
-    public Results(String lattitude,String langitude) {
+    @SerializedName("police")
+    private String police;
+
+
+    public Results(String lattitude,String langitude,String police) {
         this.lattitude = lattitude;
         this.langitude = langitude;
+        this.police = police;
     }
 
     public String getLattitudee() {
@@ -20,5 +25,9 @@ public class Results {
 
     public String getLangitude() {
         return langitude;
+    }
+
+    public String getPolice() {
+        return police;
     }
 }
