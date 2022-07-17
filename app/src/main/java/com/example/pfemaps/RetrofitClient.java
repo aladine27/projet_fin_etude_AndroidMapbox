@@ -5,12 +5,14 @@ public class RetrofitClient {
 
     private static RetrofitClient instance = null;
     private Api myApi;
+    private Apit myApit;
     //call class API
     private RetrofitClient() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         myApi = retrofit.create(Api.class);
+        myApit = retrofit.create(Apit.class);
     }
 
     public static synchronized RetrofitClient getInstance() {
@@ -22,6 +24,10 @@ public class RetrofitClient {
 
     public Api getMyApi() {
         return myApi;
+    }
+
+    public Apit getMyApit() {
+        return myApit;
     }
 
 }

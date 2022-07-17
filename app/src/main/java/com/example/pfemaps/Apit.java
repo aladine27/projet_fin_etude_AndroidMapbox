@@ -6,11 +6,10 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public interface Api {
+public interface Apit {
     public static final String BASE_URL = "http:192.168.127.125:8000/api/";
-    @GET("datamap")
-    Call<List<Results>> getListLoactionFromBD(@Query("tourner") String tourner);
 
-
+    @GET("tourne")
+    Call<List<Resultst>> getListTourneFromBD();
 
 }
